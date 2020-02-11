@@ -1,6 +1,6 @@
 import math
 
-def findBestSplit(list, space):
+def findBestSplit(list):
     if(len(list) == 0):
         return
     firstSortedList = sorted(list, key=lambda tup: tup[0], reverse=True)
@@ -9,11 +9,11 @@ def findBestSplit(list, space):
     leftList = []
     rightList = []
     bestThreshold = 0
-    x = ""
+    x = 0
     for threshold in thresholdList:
         tempIG, tempLeftList, tempRightList = informationGain(firstSortedList, threshold, 0)
         if tempIG > infoGain:
-            x = "x1"
+            x = 0
             infoGain = tempIG
             bestThreshold = threshold
             leftList = tempLeftList
@@ -24,18 +24,14 @@ def findBestSplit(list, space):
     for threshold in thresholdList:
         tempIG, tempLeftList, tempRightList =  informationGain(secondSortedList, threshold, 1)
         if tempIG > infoGain:
-            x = "x2"
+            x = 1
             infoGain = tempIG
             bestThreshold = threshold
             leftList = tempLeftList
             rightList = tempRightList
-
-    print(space + "Feature: " + x +" Threshold : " + str(bestThreshold) + " Information Gain: " + str(infoGain))
-    if(bestThreshold == 0):
-        return
-    findBestSplit(leftList, space + "    ")
-    findBestSplit(rightList, space + "    ")
-
+    if bestThreshold == 0:
+        return list[0][2]
+    return {'index': x, 'threshold': bestThreshold, 'groups': {'left': leftList, 'right': rightList}}
 
 
 def findThresholds(sortedList, index):
@@ -82,6 +78,39 @@ def entropy(sortedList):
         temp += right * math.log2(right)
     return temp*(-1)
 
+def split(node):
+    leftList = node["groups"]["left"]
+    rightList = node["groups"]["right"]
+    del (node['groups'])
+    if not leftList or not rightList:
+        node['left'] = node['right'] = to_terminal(leftList + rightList)
+        return
+    node['left'] = findBestSplit(leftList)
+    if isinstance(node['left'], dict):
+        split(node['left'])
+    node['right'] = findBestSplit(rightList)
+    if isinstance(node['right'], dict):
+        split(node['right'])
+
+# Create a terminal node value
+def to_terminal(group):
+	outcomes = [row[-1] for row in group]
+	return max(set(outcomes), key=outcomes.count)
+
+
+def buildTree(list):
+    root = findBestSplit(list)
+    split(root)
+    return root
+
+def printTree(node, depth):
+    if isinstance(node, dict):
+        print('%s[X%d >= %.3f]' % ((depth * ' ', (node['index'] + 1), node['threshold'])))
+        printTree(node['left'], depth+1)
+        printTree(node['right'], depth+1)
+    else:
+        print('%s[%s]' % ((depth*' ', node)))
+
 #####           MAIN        #########
 inputFile = open("/Users/dsrinath/Downloads/hw2/D3leaves.txt", "r")
 lines = inputFile.readlines()
@@ -91,7 +120,10 @@ for line in lines:
     smallList = line.strip().split(" ")
     smallList = [float(i) for i in smallList]
     list.append(smallList)
-findBestSplit(list, "")
+
+tree = buildTree(list)
+printTree(tree,0)
+#findBestSplit(list)
 
 
 
