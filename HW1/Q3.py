@@ -2,27 +2,35 @@ import math
 
 def findBestSplit(list):
     firstSortedList = sorted(list, key=lambda tup: tup[0], reverse=True)
-    thresholdList = findThresholds(firstSortedList)
+    thresholdList = findThresholds(firstSortedList, 0)
+    print("Split based on the first features - x1")
     for threshold in thresholdList:
-        print("Threshold : " + str(threshold) + " Split: " + str(informationGain(firstSortedList, threshold)))
+        print("Threshold : " + str(threshold) + " Information Gain: " + str(informationGain(firstSortedList, threshold, 0)))
+
+    secondSortedList = sorted(list, key=lambda tup: tup[1], reverse=True)
+    thresholdList = findThresholds(secondSortedList, 1)
+    print("Split based on the first features - x2")
+    for threshold in thresholdList:
+        print("Threshold : " + str(threshold) + " Information Gain: " + str(informationGain(secondSortedList, threshold, 1)))
 
 
-def findThresholds(sortedList):
+
+def findThresholds(sortedList, index):
     list = []
-    list.append(sortedList[0][0])
-    threshold = sortedList[0][0]
+    list.append(sortedList[0][index])
+    threshold = sortedList[0][index]
     for element in sortedList:
-        if(float(element[0]) < float(threshold)):
-            list.append(element[0])
-            threshold = element[0]
+        if(float(element[index]) < float(threshold)):
+            list.append(element[index])
+            threshold = element[index]
     return list
 
-def informationGain(sortedList, threshold):
+def informationGain(sortedList, threshold, index):
     overallEntropy = entropy(sortedList)
     leftList = []
     rightList = []
     for element in sortedList:
-        if(float(element[0]) >= float(threshold)):
+        if(float(element[index]) >= float(threshold)):
             leftList.append(element)
         else:
             rightList.append(element)
