@@ -3,15 +3,11 @@ import matplotlib.pyplot as plt
 #####           MAIN        #########
 inputFile = open("/Users/dsrinath/Downloads/hw2/D2.txt", "r")
 lines = inputFile.readlines()
-x = []
-y = []
-col =[]
+x = [0,0,1,1]
+y = [0,1,0,1]
+col =[0,1,1,0]
 
-for line in lines:
-    smallList = line.strip().split(" ")
-    x.append(float(smallList[0]))
-    y.append(float(smallList[1]))
-    col.append(float(smallList[2]))
+plt.title("Sample dataset")
 plt.scatter(x,y,c=col,cmap=plt.cm.autumn)
 plt.show()
 

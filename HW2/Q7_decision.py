@@ -1,4 +1,8 @@
 import math
+from random import shuffle
+import matplotlib.pyplot as plt
+
+nodeNumber = 0
 
 def findBestSplit(list):
     if(len(list) == 0):
@@ -79,6 +83,8 @@ def entropy(sortedList):
     return temp*(-1)
 
 def split(node):
+    global nodeNumber
+    nodeNumber += 1
     leftList = node["groups"]["left"]
     rightList = node["groups"]["right"]
     del (node['groups'])
@@ -111,8 +117,20 @@ def printTree(node, depth):
     else:
         print('%s[%s]' % ((depth*' ', node)))
 
+def predict(node, row):
+    if(row[node['index']] >= node['threshold']):
+        if isinstance(node['left'],dict):
+            return predict(node['left'], row)
+        else:
+            return node['left']
+    else:
+        if isinstance(node['right'], dict):
+            return predict(node['right'], row)
+        else:
+            return node['right']
+
 #####           MAIN        #########
-inputFile = open("/Users/dsrinath/Downloads/hw2/D3leaves.txt", "r")
+inputFile = open("/Users/dsrinath/Downloads/hw2/Dbig.txt", "r")
 lines = inputFile.readlines()
 list = []
 
@@ -120,10 +138,40 @@ for line in lines:
     smallList = line.strip().split(" ")
     smallList = [float(i) for i in smallList]
     list.append(smallList)
+shuffle(list)
 
-tree = buildTree(list)
-printTree(tree,0)
-#findBestSplit(list)
+training_set = list[:8192]
+test_set = list[8192:]
+
+d32 = training_set[:32]
+d128 = training_set[:128]
+d512 = training_set[:512]
+d2048 = training_set[:2048]
+d8192 = training_set[:8192]
+
+tree = buildTree(d8192)
+error = 0
+x = []
+y = []
+col =[]
+for row in list:
+    actual = predict(tree, row)
+    x.append(float(row[0]))
+    y.append(float(row[1]))
+    col.append(float(actual))
+
+plt.title("Decision Boundary - D8192")
+plt.scatter(x,y,c=col,cmap=plt.cm.autumn)
+plt.show()
+
+
+
+#### Number of Nodes, Error ####
+# D32           6           315
+# D128          12          178
+# D512          28          104
+# D2048         59          56
+# D8192         107         32
 
 
 

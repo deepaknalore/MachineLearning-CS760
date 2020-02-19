@@ -1,4 +1,8 @@
 import math
+from random import shuffle
+import matplotlib.pyplot as plt
+
+nodeNumber = 0
 
 def findBestSplit(list):
     if(len(list) == 0):
@@ -79,6 +83,8 @@ def entropy(sortedList):
     return temp*(-1)
 
 def split(node):
+    global nodeNumber
+    nodeNumber += 1
     leftList = node["groups"]["left"]
     rightList = node["groups"]["right"]
     del (node['groups'])
@@ -111,8 +117,20 @@ def printTree(node, depth):
     else:
         print('%s[%s]' % ((depth*' ', node)))
 
+def predict(node, row):
+    if(row[node['index']] >= node['threshold']):
+        if isinstance(node['left'],dict):
+            return predict(node['left'], row)
+        else:
+            return node['left']
+    else:
+        if isinstance(node['right'], dict):
+            return predict(node['right'], row)
+        else:
+            return node['right']
+
 #####           MAIN        #########
-inputFile = open("/Users/dsrinath/Downloads/hw2/D1.txt", "r")
+inputFile = open("/Users/dsrinath/Downloads/hw2/D2.txt", "r")
 lines = inputFile.readlines()
 list = []
 
@@ -122,8 +140,33 @@ for line in lines:
     list.append(smallList)
 
 tree = buildTree(list)
-printTree(tree,0)
-#findBestSplit(list)
+error = 0
+x = []
+y = []
+col =[]
+
+test = []
+i = 0.0
+j = 0.0
+while i <= 1.0:
+    j = 0.0
+    while j <= 1.0:
+        j += 0.001
+        temp = []
+        temp.append(i)
+        temp.append(j)
+        test.append(temp)
+    i += 0.001
+
+for row in test:
+    actual = predict(tree, row)
+    x.append(float(row[0]))
+    y.append(float(row[1]))
+    col.append(float(actual))
+
+plt.title("Decision Boundary - D2")
+plt.scatter(x,y,c=col,cmap=plt.cm.autumn)
+plt.show()
 
 
 

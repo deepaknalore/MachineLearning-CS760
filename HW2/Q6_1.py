@@ -12,6 +12,7 @@ for line in lines:
     x.append(float(smallList[0]))
     y.append(float(smallList[1]))
     col.append(float(smallList[2]))
+plt.title("D1 dataset")
 plt.scatter(x,y,c=col,cmap=plt.cm.autumn)
 plt.show()
 

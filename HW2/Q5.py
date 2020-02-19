@@ -105,14 +105,14 @@ def buildTree(list):
 
 def printTree(node, depth):
     if isinstance(node, dict):
-        print('%s[X%d >= %.3f]' % ((depth * ' ', (node['index'] + 1), node['threshold'])))
+        print('%s[X%d >= %.3f]' % ((depth * '-', (node['index'] + 1), node['threshold'])))
         printTree(node['left'], depth+1)
         printTree(node['right'], depth+1)
     else:
-        print('%s[%s]' % ((depth*' ', node)))
+        print('%s[%s]' % ((depth*'-', node)))
 
 #####           MAIN        #########
-inputFile = open("/Users/dsrinath/Downloads/hw2/D2.txt", "r")
+inputFile = open("/Users/dsrinath/Downloads/hw2/D1.txt", "r")
 lines = inputFile.readlines()
 list = []
 
@@ -123,6 +123,7 @@ for line in lines:
 
 tree = buildTree(list)
 printTree(tree,0)
+#findBestSplit(list)
 
 
 
