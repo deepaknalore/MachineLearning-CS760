@@ -1,0 +1,3 @@
+[console_scripts]
+pingparsing = pingparsing.cli:main
+
