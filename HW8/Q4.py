@@ -32,10 +32,10 @@ X = X - y
 S = np.cov(X.T)
 w, v = np.linalg.eig(S)
 print(w[:2])
-v1 = v[0,:]
-v2 = v[1,:]
-v1 = np.divide(v1,(np.amax(v1)/255.0))
-v2 = np.divide(v2,(np.amax(v2)/255.0))
+v1 = v[:,0]
+v2 = v[:,1]
+# v1 = np.divide(v1,(np.amax(v1)/255.0))
+# v2 = np.divide(v2,(np.amax(v2)/255.0))
 img = v1.reshape(16,16,order='F')
 plt.imshow(img, cmap="gray")
 plt.show()

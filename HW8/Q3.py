@@ -27,6 +27,7 @@ for i in range(256):
 X = np.array(X)
 y = np.mean(X.T, axis=1)
 X = X - y
-S = np.dot(X.T,X)
-S = np.divide(S,399)
+# S = np.dot(X.T,X)
+# S = np.divide(S,399)
+S = np.cov(X.T)
 print(S[:5,:5])
